@@ -17,11 +17,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      # Этот шаг принудительно разрешит запуск gradlew
       - name: Grant chmod execution permission
         run: chmod +x gradlew
 
-      # Теперь запускаем сборку через локальный gradlew репозитория
       - name: Build with Gradle Wrapper
         run: ./gradlew build --no-daemon --stacktrace
 
@@ -32,6 +30,7 @@ jobs:
           password: ${{ secrets.SFTP_PASSWORD }}
           server: ${{ secrets.SFTP_HOST }}
           port: ${{ secrets.SFTP_PORT }}
-          local_path: 'build/libs/'
-          remote_path: '/plugins/'
+          local_path: 'build/libs/*' # Звёздочка указывает, что нужно брать сами файлы внутри папки
+          remote_path: '/plugins'
+          sftp_only: true # Принудительно работать строго по SFTP (критично для Pterodactyl-панелей)
           delete_remote_files: false
