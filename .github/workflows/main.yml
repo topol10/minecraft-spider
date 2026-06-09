@@ -20,15 +20,15 @@ jobs:
       - name: Build with Gradle
         run: gradle build --no-daemon --stacktrace
 
-      # Собираем все готовые .jar файлы плагина в одну папку
-      - name: Prepare Plugin File
+      # Ищем вообще любые .jar файлы, которые создал компилятор в проекте
+      - name: Collect All Jar Files
         run: |
-          mkdir -p ready_plugin
-          find build/libs/ -name "*.jar" ! -name "*original*" -exec cp {} ready_plugin/ \;
+          mkdir -p final_output
+          find . -name "*.jar" ! -name "*original*" ! -path "*/.gradle/*" -exec cp {} final_output/ \;
+          ls -l final_output
 
-      # Выкладываем файл на страницу GitHub Actions для скачивания
       - name: Upload Plugin Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Minecraft-Spider-Plugin
-          path: ready_plugin/
+          path: final_output/
