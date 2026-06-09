@@ -17,16 +17,19 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      # Используем системный gradle вместо ./gradlew
       - name: Build with Gradle
         run: gradle build --no-daemon --stacktrace
 
       - name: Deploy to MCServerHost via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          server: ${{ secrets.SFTP_HOST }}
           username: ${{ secrets.SFTP_USER }}
           password: ${{ secrets.SFTP_PASSWORD }}
+          server: ${{ secrets.SFTP_HOST }}
           port: ${{ secrets.SFTP_PORT }}
-          local-dir: build/libs/
-          server-dir: /plugins/
+          # Путь к собранному плагину на GitHub
+          local_path: 'build/libs/'
+          # Точный путь к папке плагинов на сервере майнкрафт
+          remote_path: '/plugins/'
+          # Очищать ли папку перед заливкой (false, чтобы не удалить другие плагины)
+          delete_remote_files: false
