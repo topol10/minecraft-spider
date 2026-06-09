@@ -7,13 +7,13 @@ version = "4.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    // Подключаем официальный репозиторий PaperMC, откуда скачаются нужные библиотеки
+    // Этот адрес скачает нужные библиотеки майнкрафта, чтобы код не выдавал ошибку на 300 строк
     maven("https://papermc.io")
     maven("https://sonatype.org")
 }
 
 dependencies {
-    // Подтягиваем библиотеки Paper API напрямую из интернета для компиляции
+    // Подключаем стабильное Paper API
     compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 }
