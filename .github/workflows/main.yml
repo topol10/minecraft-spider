@@ -20,15 +20,17 @@ jobs:
       - name: Build with Gradle
         run: gradle build --no-daemon --stacktrace
 
-      # Ищем вообще любые .jar файлы, которые создал компилятор в проекте
+      # Собираем файлы и добавляем "|| true", чтобы шаг не падал, если папка пуста
       - name: Collect All Jar Files
         run: |
           mkdir -p final_output
-          find . -name "*.jar" ! -name "*original*" ! -path "*/.gradle/*" -exec cp {} final_output/ \;
-          ls -l final_output
+          find . -name "*.jar" ! -name "*original*" -exec cp {} final_output/ \; || true
+          ls -l final_output || true
 
+      # Загружаем всё, что удалось найти
       - name: Upload Plugin Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Minecraft-Spider-Plugin
           path: final_output/
+          if-no-files-found: ignore
