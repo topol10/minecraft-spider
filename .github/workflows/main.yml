@@ -27,9 +27,6 @@ jobs:
           password: ${{ secrets.SFTP_PASSWORD }}
           server: ${{ secrets.SFTP_HOST }}
           port: ${{ secrets.SFTP_PORT }}
-          # Путь к собранному плагину на GitHub
           local_path: 'build/libs/'
-          # Точный путь к папке плагинов на сервере майнкрафт
           remote_path: '/plugins/'
-          # Очищать ли папку перед заливкой (false, чтобы не удалить другие плагины)
           delete_remote_files: false
