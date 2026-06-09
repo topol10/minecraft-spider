@@ -123,3 +123,46 @@ private fun SpiderBody.walkAt(targetVelocity: Vector, tridentDetector: TridentHi
 
     if (tridentDetector != null && tridentDetector.stunned && targetVelocity.isZero) isWalking = false
 }
+// === АГРЕССИВНЫЕ ПАУКИ ===
+class AggressiveBehaviour : SpiderBehaviour {
+    var targetPlayer: org.bukkit.entity.Player? = null
+}
+
+fun setupAggressiveBehaviour(app: ECS) {
+    app.onTick {
+        for ((entity, spider, behaviour) in app.query<ECSEntity, SpiderBody, AggressiveBehaviour>()) {
+            val world = entity.get<org.bukkit.Location>()?.world ?: continue
+            val position = spider.position
+
+            val nearbyPlayers = world.players.filter { 
+                it.isValid && it.location.distance(position.toLocation(world)) < 35 
+            }
+
+            if (behaviour.targetPlayer == null || 
+                !behaviour.targetPlayer!!.isValid || 
+                behaviour.targetPlayer!!.location.distance(position.toLocation(world)) > 50) {
+                
+                behaviour.targetPlayer = nearbyPlayers.minByOrNull { 
+                    it.location.distance(position.toLocation(world)) 
+                }
+            }
+
+            val player = behaviour.targetPlayer
+            if (player != null) {
+                val playerLoc = player.location.toVector()
+                val direction = playerLoc.clone().subtract(position).normalize()
+
+                spider.rotateTowards(direction)
+
+                val tridentDetector = entity.query<TridentHitDetector>()
+                spider.walkAt(direction.multiply(spider.gait.maxSpeed * 1.4), tridentDetector)
+
+                if (position.distance(playerLoc) < 2.8) {
+                    player.damage(8.0, entity.getBukkitEntity() ?: continue)
+                }
+            } else {
+                spider.walkAt(Vector(0.0, 0.0, 0.0), entity.query<TridentHitDetector>())
+            }
+        }
+    }
+}
