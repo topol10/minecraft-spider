@@ -10,10 +10,11 @@ import com.heledron.spideranimation.utilities.ecs.ECSEntity
 fun setupSpider(app: ECS) {
     setupSpiderBody(app)
     setupBehaviours(app)
-
+    setupAggressiveBehaviour(app)
+    
     app.onTick {
         for ((entity, _) in app.query<ECSEntity, SpiderBody>()) {
-            entity.replaceComponent<SpiderBehaviour>(StayStillBehaviour())
+            entity.replaceComponent<SpiderBehaviour>(AggressiveBehaviour())
         }
     }
 
