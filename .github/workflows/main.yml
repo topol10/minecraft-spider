@@ -17,18 +17,18 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      # Собираем проект установленным в систему gradle, так как файла gradlew нет
       - name: Build with Gradle
         run: gradle build --no-daemon --stacktrace
 
-      - name: Deploy to MCServerHost via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      # Собираем все готовые .jar файлы плагина в одну папку
+      - name: Prepare Plugin File
+        run: |
+          mkdir -p ready_plugin
+          find build/libs/ -name "*.jar" ! -name "*original*" -exec cp {} ready_plugin/ \;
+
+      # Выкладываем файл на страницу GitHub Actions для скачивания
+      - name: Upload Plugin Artifact
+        uses: actions/upload-artifact@v4
         with:
-          username: ${{ secrets.SFTP_USER }}
-          password: ${{ secrets.SFTP_PASSWORD }}
-          server: ${{ secrets.SFTP_HOST }}
-          port: ${{ secrets.SFTP_PORT }}
-          local_path: 'build/libs/'
-          remote_path: '/plugins/'
-          sftp_only: true
-          delete_remote_files: false
+          name: Minecraft-Spider-Plugin
+          path: ready_plugin/
