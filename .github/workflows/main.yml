@@ -17,8 +17,13 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build with Gradle
-        run: gradle build --no-daemon --stacktrace
+      # Этот шаг принудительно разрешит запуск gradlew
+      - name: Grant chmod execution permission
+        run: chmod +x gradlew
+
+      # Теперь запускаем сборку через локальный gradlew репозитория
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build --no-daemon --stacktrace
 
       - name: Deploy to MCServerHost via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
