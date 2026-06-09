@@ -17,11 +17,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Grant chmod execution permission
-        run: chmod +x gradlew
-
-      - name: Build with Gradle Wrapper
-        run: ./gradlew build --no-daemon --stacktrace
+      # Собираем проект установленным в систему gradle, так как файла gradlew нет
+      - name: Build with Gradle
+        run: gradle build --no-daemon --stacktrace
 
       - name: Deploy to MCServerHost via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
@@ -30,7 +28,7 @@ jobs:
           password: ${{ secrets.SFTP_PASSWORD }}
           server: ${{ secrets.SFTP_HOST }}
           port: ${{ secrets.SFTP_PORT }}
-          local_path: 'build/libs/*' # Звёздочка указывает, что нужно брать сами файлы внутри папки
-          remote_path: '/plugins'
-          sftp_only: true # Принудительно работать строго по SFTP (критично для Pterodactyl-панелей)
+          local_path: 'build/libs/'
+          remote_path: '/plugins/'
+          sftp_only: true
           delete_remote_files: false
